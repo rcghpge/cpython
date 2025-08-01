@@ -32,4 +32,4 @@ jobs:
         git merge upstream/main || echo "No upstream changes to merge"
 
     - name: Push updates to fork
-      run: git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:main
+      run: git push https://x-access-token:${{ secrets.SYNC_WORKFLOW }}@github.com/${{ github.repository }} HEAD:main
