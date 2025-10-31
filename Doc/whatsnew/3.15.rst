@@ -498,6 +498,9 @@ sqlite3
      details.
      (Contributed by Stan Ulbrych and Łukasz Langa in :gh:`133461`.)
 
+   * Table, index, trigger, view, column, function, and schema completion on <tab>.
+     (Contributed by Long Tan in :gh:`136101`.)
+
 
 ssl
 ---
@@ -606,6 +609,18 @@ unittest
 * :func:`unittest.TestCase.assertLogs` will now accept a formatter
   to control how messages are formatted.
   (Contributed by Garry Cairns in :gh:`134567`.)
+
+
+warnings
+--------
+
+* Improve filtering by module in :func:`warnings.warn_explicit` if no *module*
+  argument is passed.
+  It now tests the module regular expression in the warnings filter not only
+  against the filename with ``.py`` stripped, but also against module names
+  constructed starting from different parent directories of the filename
+  (with ``/__init__.py``, ``.py`` and, on Windows, ``.pyw`` stripped).
+  (Contributed by Serhiy Storchaka in :gh:`135801`.)
 
 
 venv
@@ -791,6 +806,11 @@ unicodedata
 
 * The Unicode database has been updated to Unicode 17.0.0.
 
+* Add :func:`unicodedata.isxidstart` and :func:`unicodedata.isxidcontinue`
+  functions to check whether a character can start or continue a
+  `Unicode Standard Annex #31 <https://www.unicode.org/reports/tr31/>`_ identifier.
+  (Contributed by Stan Ulbrych in :gh:`129117`.)
+
 
 wave
 ----
@@ -848,6 +868,7 @@ New deprecations
     - :mod:`argparse`
     - :mod:`csv`
     - :mod:`!ctypes.macholib`
+    - :mod:`decimal` (use :data:`decimal.SPEC_VERSION` instead)
     - :mod:`imaplib`
     - :mod:`ipaddress`
     - :mod:`json`
