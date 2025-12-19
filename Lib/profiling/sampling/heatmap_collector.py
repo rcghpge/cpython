@@ -858,6 +858,7 @@ class HeatmapCollector(StackTraceCollector):
             "<!-- INLINE_CSS -->": f"<style>\n{self._template_loader.index_css}\n</style>",
             "<!-- INLINE_JS -->": f"<script>\n{self._template_loader.index_js}\n</script>",
             "<!-- PYTHON_LOGO -->": self._template_loader.logo_html,
+            "<!-- PYTHON_VERSION -->": f"{sys.version_info.major}.{sys.version_info.minor}",
             "<!-- NUM_FILES -->": str(len(file_stats)),
             "<!-- TOTAL_SAMPLES -->": f"{self._total_samples:,}",
             "<!-- DURATION -->": f"{self.stats.get('duration_sec', 0):.1f}s",
@@ -915,6 +916,7 @@ class HeatmapCollector(StackTraceCollector):
             "<!-- INLINE_CSS -->": f"<style>\n{self._template_loader.file_css}\n</style>",
             "<!-- INLINE_JS -->": f"<script>\n{self._template_loader.file_js}\n</script>",
             "<!-- PYTHON_LOGO -->": self._template_loader.logo_html,
+            "<!-- PYTHON_VERSION -->": f"{sys.version_info.major}.{sys.version_info.minor}",
         }
 
         html_content = self._template_loader.file_template
@@ -976,7 +978,17 @@ class HeatmapCollector(StackTraceCollector):
                 f'data-spec-pct="{spec_pct}" '
                 f'onclick="toggleBytecode(this)" title="Show bytecode">&#9654;</button>'
             )
-            bytecode_panel_html = f'        <div class="bytecode-panel" id="bytecode-{line_num}" style="display:none;"></div>\n'
+            # Wrapper contains columns + content panel
+            bytecode_panel_html = (
+                f'        <div class="bytecode-wrapper" id="bytecode-wrapper-{line_num}">\n'
+                f'            <div class="bytecode-columns">'
+                f'<div class="line-number"></div>'
+                f'<div class="line-samples-self"></div>'
+                f'<div class="line-samples-cumulative"></div>'
+                f'</div>\n'
+                f'            <div class="bytecode-panel" id="bytecode-{line_num}"></div>\n'
+                f'        </div>\n'
+            )
         elif self.opcodes_enabled:
             # Add invisible spacer to maintain consistent indentation when opcodes are enabled
             bytecode_btn_html = '<div class="bytecode-spacer"></div>'

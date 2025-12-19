@@ -24,7 +24,8 @@ function toggleTheme() {
     // Update theme button icon
     const btn = document.getElementById('theme-btn');
     if (btn) {
-        btn.innerHTML = next === 'dark' ? '&#9788;' : '&#9790;';  // sun or moon
+        btn.querySelector('.icon-moon').style.display = next === 'dark' ? 'none' : '';
+        btn.querySelector('.icon-sun').style.display = next === 'dark' ? '' : 'none';
     }
     applyLineColors();
 
@@ -39,7 +40,8 @@ function restoreUIState() {
         document.documentElement.setAttribute('data-theme', savedTheme);
         const btn = document.getElementById('theme-btn');
         if (btn) {
-            btn.innerHTML = savedTheme === 'dark' ? '&#9788;' : '&#9790;';
+            btn.querySelector('.icon-moon').style.display = savedTheme === 'dark' ? 'none' : '';
+            btn.querySelector('.icon-sun').style.display = savedTheme === 'dark' ? '' : 'none';
         }
     }
 }
@@ -540,20 +542,23 @@ function toggleBytecode(button) {
     const lineId = lineDiv.id;
     const lineNum = lineId.replace('line-', '');
     const panel = document.getElementById(`bytecode-${lineNum}`);
+    const wrapper = document.getElementById(`bytecode-wrapper-${lineNum}`);
 
-    if (!panel) return;
+    if (!panel || !wrapper) return;
 
-    const isExpanded = panel.style.display !== 'none';
+    const isExpanded = panel.classList.contains('expanded');
 
     if (isExpanded) {
-        panel.style.display = 'none';
+        panel.classList.remove('expanded');
+        wrapper.classList.remove('expanded');
         button.classList.remove('expanded');
         button.innerHTML = '&#9654;';  // Right arrow
     } else {
         if (!panel.dataset.populated) {
             populateBytecodePanel(panel, button);
         }
-        panel.style.display = 'block';
+        panel.classList.add('expanded');
+        wrapper.classList.add('expanded');
         button.classList.add('expanded');
         button.innerHTML = '&#9660;';  // Down arrow
     }
