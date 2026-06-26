@@ -85,6 +85,20 @@ The module :mod:`!curses` defines the following functions:
    .. versionadded:: 3.14
 
 
+.. function:: alloc_pair(fg, bg)
+
+   Allocate a color pair for foreground color *fg* and background color *bg*,
+   and return its number.  If a color pair for the same combination of colors
+   already exists, return its number.  Otherwise allocate a new color pair and
+   return its number.
+
+   This function is only available if Python was built against a wide-character
+   version of the underlying curses library with extended-color support (see
+   :func:`has_extended_color_support`).
+
+   .. versionadded:: next
+
+
 .. function:: baudrate()
 
    Return the output speed of the terminal in bits per second.  On software
@@ -194,6 +208,16 @@ The module :mod:`!curses` defines the following functions:
    the curses library itself.
 
 
+.. function:: erasewchar()
+
+   Return the user's current erase character as a one-character string.
+   This is the wide-character variant of :func:`erasechar`.  Availability
+   depends on building Python against a wide-character-aware version of the
+   underlying curses library.
+
+   .. versionadded:: next
+
+
 .. function:: filter()
 
    The :func:`.filter` routine, if used, must be called before :func:`initscr` is
@@ -202,6 +226,31 @@ The module :mod:`!curses` defines the following functions:
    string is set to the value of ``cr``. The effect is that the cursor is confined to
    the current line, and so are screen updates.  This may be used for enabling
    character-at-a-time  line editing without touching the rest of the screen.
+
+
+.. function:: nofilter()
+
+   Undo the effect of a previous :func:`.filter` call.
+   Like :func:`.filter`, it must be called before :func:`initscr` (or
+   :func:`newterm`) so that the next initialization uses the full screen
+   again.
+
+   Availability: if the underlying curses library provides ``nofilter()``.
+
+   .. versionadded:: next
+
+
+.. function:: find_pair(fg, bg)
+
+   Return the number of a color pair for foreground color *fg* and background
+   color *bg*, or ``-1`` if no color pair for this combination of colors has
+   been allocated.
+
+   This function is only available if Python was built against a wide-character
+   version of the underlying curses library with extended-color support (see
+   :func:`has_extended_color_support`).
+
+   .. versionadded:: next
 
 
 .. function:: flash()
@@ -215,6 +264,18 @@ The module :mod:`!curses` defines the following functions:
 
    Flush all input buffers.  This throws away any  typeahead  that  has been typed
    by the user and has not yet been processed by the program.
+
+
+.. function:: free_pair(pair_number)
+
+   Free the color pair *pair_number*, which must have been allocated by
+   :func:`alloc_pair`.  The pair must not be in use.
+
+   This function is only available if Python was built against a wide-character
+   version of the underlying curses library with extended-color support (see
+   :func:`has_extended_color_support`).
+
+   .. versionadded:: next
 
 
 .. function:: getmouse()
@@ -337,6 +398,41 @@ The module :mod:`!curses` defines the following functions:
    no flushing is done.
 
 
+.. function:: is_cbreak()
+
+   Return ``True`` if cbreak mode (see :func:`cbreak`) is enabled,
+   ``False`` otherwise.
+   Availability: ncurses 6.5 or later.
+
+   .. versionadded:: next
+
+
+.. function:: is_echo()
+
+   Return ``True`` if echo mode (see :func:`echo`) is enabled,
+   ``False`` otherwise.
+   Availability: ncurses 6.5 or later.
+
+   .. versionadded:: next
+
+
+.. function:: is_nl()
+
+   Return ``True`` if nl mode (see :func:`nl`) is enabled, ``False`` otherwise.
+   Availability: ncurses 6.5 or later.
+
+   .. versionadded:: next
+
+
+.. function:: is_raw()
+
+   Return ``True`` if raw mode (see :func:`raw`) is enabled,
+   ``False`` otherwise.
+   Availability: ncurses 6.5 or later.
+
+   .. versionadded:: next
+
+
 .. function:: is_term_resized(nlines, ncols)
 
    Return ``True`` if :func:`resize_term` would modify the window structure,
@@ -366,6 +462,16 @@ The module :mod:`!curses` defines the following functions:
    Return the user's current line kill character as a one-byte bytes object. Under Unix operating systems
    this is a property of the controlling tty of the curses program, and is not set
    by the curses library itself.
+
+
+.. function:: killwchar()
+
+   Return the user's current line kill character as a one-character string.
+   This is the wide-character variant of :func:`killchar`.  Availability
+   depends on building Python against a wide-character-aware version of the
+   underlying curses library.
+
+   .. versionadded:: next
 
 
 .. function:: longname()
@@ -429,6 +535,36 @@ The module :mod:`!curses` defines the following functions:
 
    By default, the window will extend from the  specified position to the lower
    right corner of the screen.
+
+
+.. function:: newterm(type=None, fd=None, infd=None, /)
+
+   Initialize a new terminal in addition to the one initialized by
+   :func:`initscr`,
+   and return a :ref:`screen <curses-screen-objects>` for it.
+   This allows a program to drive more than one terminal.
+
+   *type* is the terminal name, as in :func:`setupterm`;
+   if ``None``, the value of the :envvar:`TERM` environment variable is used.
+   *fd* and *infd* are the output and input files for the terminal:
+   either a file object or a file descriptor.
+   They default to :data:`sys.stdout` and :data:`sys.stdin`.
+
+   The new screen becomes the current one.
+   Use :func:`set_term` to switch between screens.
+
+   .. versionadded:: next
+
+
+.. function:: new_prescr()
+
+   Return a new :ref:`screen <curses-screen-objects>`
+   that can be used to call functions that affect global state
+   before :func:`initscr` or :func:`newterm` is called.
+
+   Availability: if the underlying curses library provides ``new_prescr()``.
+
+   .. versionadded:: next
 
 
 .. function:: nl(flag=True)
@@ -508,6 +644,18 @@ The module :mod:`!curses` defines the following functions:
    presented to curses input functions one by one.
 
 
+.. function:: reset_color_pairs()
+
+   Discard all color-pair definitions, releasing the color pairs allocated by
+   :func:`init_pair` and :func:`alloc_pair`.
+
+   This function is only available if Python was built against a wide-character
+   version of the underlying curses library with extended-color support (see
+   :func:`has_extended_color_support`).
+
+   .. versionadded:: next
+
+
 .. function:: reset_prog_mode()
 
    Restore the  terminal  to "program" mode, as previously saved  by
@@ -574,6 +722,17 @@ The module :mod:`!curses` defines the following functions:
    character to spaces as it adds the tab to a window.
 
    .. versionadded:: 3.9
+
+
+.. function:: set_term(screen, /)
+
+   Make *screen*, a :ref:`screen <curses-screen-objects>` returned by
+   :func:`newterm`, the current terminal,
+   and return the previously current screen.
+   Returns ``None`` if the previous screen was the one created by
+   :func:`initscr`.
+
+   .. versionadded:: next
 
 .. function:: setsyx(y, x)
 
@@ -679,6 +838,18 @@ The module :mod:`!curses` defines the following functions:
    example as ``b'^C'``. Printing characters are left as they are.
 
 
+.. function:: wunctrl(ch)
+
+   Return a string which is a printable representation of the wide character *ch*.
+   Control characters are represented as a caret followed by the character, for
+   example as ``'^C'``.  Printing characters are left as they are.  This is the
+   wide-character variant of :func:`unctrl`, returning a :class:`str` rather than
+   :class:`bytes`.  Availability depends on building Python against a
+   wide-character-aware version of the underlying curses library.
+
+   .. versionadded:: next
+
+
 .. function:: ungetch(ch)
 
    Push *ch* so the next :meth:`~window.getch` will return it.
@@ -759,11 +930,18 @@ Window objects
    character previously painted at that location.  By default, the character
    position and attributes are the current settings for the window object.
 
+   *ch* may be a single character, optionally followed by combining
+   characters, that together occupy one character cell.
+
    .. note::
 
       Writing outside the window, subwindow, or pad raises a :exc:`curses.error`.
       Attempting to write to the lower-right corner of a window, subwindow,
       or pad will cause an exception to be raised after the character is printed.
+
+   .. versionchanged:: next
+      A character may now be given as a string of a base character followed
+      by combining characters, instead of only a single character.
 
 
 .. method:: window.addnstr(str, n[, attr])
@@ -823,6 +1001,9 @@ Window objects
    * Wherever  the  former background character appears, it is changed to the new
      background character.
 
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.
+
 
 .. method:: window.bkgdset(ch[, attr])
 
@@ -832,6 +1013,9 @@ Window objects
    the character and attribute parts of the background are combined with the blank
    characters.  The background becomes a property of the character and moves with
    the character through any scrolling and insert/delete line/character operations.
+
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.
 
 
 .. method:: window.border([ls[, rs[, ts[, bs[, tl[, tr[, bl[, br]]]]]]]])
@@ -866,11 +1050,19 @@ Window objects
    | *br*      | Bottom-right corner | :const:`ACS_LRCORNER` |
    +-----------+---------------------+-----------------------+
 
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.  A single call cannot mix
+      them with integer or byte characters.
+
 
 .. method:: window.box([vertch, horch])
 
    Similar to :meth:`border`, but both *ls* and *rs* are *vertch* and both *ts* and
    *bs* are *horch*.  The default corner characters are always used by this function.
+
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.  A single call cannot mix
+      them with integer or byte characters.
 
 
 .. method:: window.chgat(attr)
@@ -940,6 +1132,9 @@ Window objects
    Add character *ch* with attribute *attr*, and immediately  call :meth:`refresh`
    on the window.
 
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.
+
 
 .. method:: window.enclose(y, x)
 
@@ -994,6 +1189,16 @@ Window objects
    .. versionadded:: 3.3
 
 
+.. method:: window.getdelay()
+
+   Return the window's read timeout in milliseconds,
+   as set by :meth:`nodelay` or :meth:`timeout`:
+   ``-1`` for blocking, ``0`` for non-blocking,
+   or a positive number of milliseconds.
+
+   .. versionadded:: next
+
+
 .. method:: window.getkey([y, x])
 
    Get a character, returning a string instead of an integer, as :meth:`getch`
@@ -1007,11 +1212,27 @@ Window objects
    Return a tuple ``(y, x)`` of the height and width of the window.
 
 
+.. method:: window.getparent()
+
+   Return the parent window of this subwindow,
+   or ``None`` if this window is not a subwindow.
+
+   .. versionadded:: next
+
+
 .. method:: window.getparyx()
 
    Return the beginning coordinates of this window relative to its parent window
    as a tuple ``(y, x)``.  Return ``(-1, -1)`` if this window has no
    parent.
+
+
+.. method:: window.getscrreg()
+
+   Return a tuple ``(top, bottom)`` of the window's current scrolling region,
+   as set by :meth:`setscrreg`.
+
+   .. versionadded:: next
 
 
 .. method:: window.getstr()
@@ -1027,6 +1248,20 @@ Window objects
       The maximum value for *n* was increased from 1023 to 2047.
 
 
+.. method:: window.get_wstr()
+            window.get_wstr(n)
+            window.get_wstr(y, x)
+            window.get_wstr(y, x, n)
+
+   Read a string from the user, with primitive line editing capacity.
+   This is the wide-character variant of :meth:`getstr`: it returns a
+   :class:`str` rather than a :class:`bytes` object, so it can return
+   characters that are not representable in the window's encoding.
+   At most *n* characters are read; *n* defaults to and cannot exceed 2047.
+
+   .. versionadded:: next
+
+
 .. method:: window.getyx()
 
    Return a tuple ``(y, x)`` of current cursor position  relative to the window's
@@ -1039,6 +1274,9 @@ Window objects
    Display a horizontal line starting at ``(y, x)`` with length *n* consisting of
    the character *ch* with attributes *attr*.  The line stops at the right edge
    of the window if fewer than *n* cells are available.
+
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.
 
 
 .. method:: window.idcok(flag)
@@ -1076,6 +1314,9 @@ Window objects
    cursor, or at ``(y, x)`` if specified.  All characters to the right of the
    cursor are shifted one position right, with the rightmost character on the
    line being lost.  The cursor position does not change.
+
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.
 
 
 .. method:: window.insdelln(nlines)
@@ -1126,11 +1367,109 @@ Window objects
       The maximum value for *n* was increased from 1023 to 2047.
 
 
+.. method:: window.in_wstr([n])
+            window.in_wstr(y, x[, n])
+
+   Return a string of characters, extracted from the window starting at the
+   current cursor position, or at *y*, *x* if specified.  This is the
+   wide-character variant of :meth:`instr`: it returns a :class:`str` rather
+   than a :class:`bytes` object, so it can return characters that are not
+   representable in the window's encoding.  Attributes and color information
+   are stripped from the characters.  The maximum value for *n* is 2047.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_cleared()
+
+   Return the current value set by :meth:`clearok`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_idcok()
+
+   Return the current value set by :meth:`idcok`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_idlok()
+
+   Return the current value set by :meth:`idlok`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_immedok()
+
+   Return the current value set by :meth:`immedok`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_keypad()
+
+   Return the current value set by :meth:`keypad`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_leaveok()
+
+   Return the current value set by :meth:`leaveok`.
+
+   .. versionadded:: next
+
+
 .. method:: window.is_linetouched(line)
 
    Return ``True`` if the specified line was modified since the last call to
    :meth:`refresh`; otherwise return ``False``.  Raise a :exc:`curses.error`
    exception if *line* is not valid for the given window.
+
+
+.. method:: window.is_nodelay()
+
+   Return the current value set by :meth:`nodelay`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_notimeout()
+
+   Return the current value set by :meth:`notimeout`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_pad()
+
+   Return ``True`` if the window is a pad created by :func:`newpad`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_scrollok()
+
+   Return the current value set by :meth:`scrollok`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_subwin()
+
+   Return ``True`` if the window is a subwindow created by :meth:`subwin`
+   or :meth:`derwin`.
+
+   .. versionadded:: next
+
+
+.. method:: window.is_syncok()
+
+   Return the current value set by :meth:`syncok`.
+
+   .. versionadded:: next
 
 
 .. method:: window.is_wintouched()
@@ -1369,11 +1708,80 @@ Window objects
    :meth:`refresh`.
 
 
+.. method:: window.use(func, /, *args, **kwargs)
+
+   Call ``func(window, *args, **kwargs)`` with the lock of the window held,
+   and return its result.
+   This provides automatic protection for the window
+   against concurrent access from another thread.
+
+   Availability: if the underlying curses library provides ``use_window()``.
+
+   .. versionadded:: next
+
+
 .. method:: window.vline(ch, n[, attr])
             window.vline(y, x, ch, n[, attr])
 
    Display a vertical line starting at ``(y, x)`` with length *n* consisting of the
    character *ch* with attributes *attr*.
+
+   .. versionchanged:: next
+      Wide and combining characters are now accepted.
+
+
+.. _curses-screen-objects:
+
+Screen objects
+--------------
+
+.. class:: screen
+
+   A *screen* object represents a terminal initialized by :func:`newterm`
+   (or :func:`new_prescr`),
+   in addition to the default screen created by :func:`initscr`.
+   Screen objects are returned by those functions;
+   they cannot be instantiated directly.
+
+   A screen is freed automatically once it is no longer referenced,
+   either directly or through one of its windows.
+   Each window keeps its screen alive,
+   so a screen remains valid as long as any of its windows does.
+
+   .. versionadded:: next
+
+
+.. method:: screen.close()
+
+   Detach the screen's standard window,
+   breaking the reference cycle between them
+   so the screen can be reclaimed promptly instead of waiting for a
+   garbage collection.
+   Afterwards :attr:`~screen.stdscr` is ``None``
+   and the window it returned earlier can no longer be used.
+   The screen's resources are released
+   once it and all its windows are no longer referenced.
+
+   .. versionadded:: next
+
+
+.. attribute:: screen.stdscr
+
+   The standard :ref:`window <curses-window-objects>` of the screen,
+   covering the whole terminal,
+   or ``None`` for a screen created by :func:`new_prescr`.
+
+
+.. method:: screen.use(func, /, *args, **kwargs)
+
+   Call ``func(screen, *args, **kwargs)`` with the lock of the screen held,
+   and return its result.
+   This provides automatic protection for the screen
+   against concurrent access from another thread.
+
+   Availability: if the underlying curses library provides ``use_screen()``.
+
+   .. versionadded:: next
 
 
 Constants
